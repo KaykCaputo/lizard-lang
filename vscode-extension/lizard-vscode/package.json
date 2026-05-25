@@ -1,0 +1,48 @@
+{
+  "publisher": "KaykCaputo",
+  "name": "lizard-lang",
+  "displayName": "Lizard-Lang",
+  "description": "Syntax highlighting and language configuration for Lizard.",
+  "version": "0.0.3",
+  "icon": "gecko.png",
+  "license": "MIT",
+  "categories": ["Programming Languages"],
+  "keywords": ["lizard", "language", "syntax", "transpiler"],
+  "homepage": "https://github.com/KaykCaputo/lizard-lang#readme",
+  "bugs": {
+    "url": "https://github.com/KaykCaputo/lizard-lang/issues"
+  },
+  "files": ["language-configuration.json", "syntaxes/**", "LICENSE", "gecko.png"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KaykCaputo/lizard-lang.git"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+
+  "contributes": {
+    "languages": [
+      {
+        "id": "lizard",
+        "aliases": ["Lizard"],
+        "extensions": [".lz"],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./gecko.png",
+          "dark": "./gecko.png"
+        }
+      }
+    ],
+
+    "grammars": [
+      {
+        "language": "lizard",
+        "scopeName": "source.lizard",
+        "path": "./syntaxes/lizard.tmLanguage.json"
+      }
+    ]
+  },
+  
+  "extensionDependencies": ["ms-python.python"]
+}

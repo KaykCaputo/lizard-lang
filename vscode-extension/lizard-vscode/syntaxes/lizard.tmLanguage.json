@@ -1,0 +1,20 @@
+{
+  "scopeName": "source.lizard",
+  "name": "Lizard",
+
+  "patterns": [
+    {
+      "include": "source.python"
+    },
+
+    {
+      "match": "[{}]",
+      "name": "punctuation.section.block.lizard"
+    },
+
+    {
+      "match": ";",
+      "name": "punctuation.terminator.statement.lizard"
+    }
+  ]
+}

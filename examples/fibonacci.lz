@@ -1,0 +1,11 @@
+# Generate a Fibonacci sequence with a while loop.
+
+def fibonacci(count) {
+    sequence = [0, 1];
+    while len(sequence) < count {
+        sequence.append(sequence[-1] + sequence[-2]);
+    }
+    return sequence[:count];
+}
+
+print(fibonacci(10));

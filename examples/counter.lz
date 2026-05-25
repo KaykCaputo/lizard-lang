@@ -1,0 +1,16 @@
+# Define a simple class with methods.
+
+class Counter {
+    def __init__(self, start=0) {
+        self.value = start;
+    }
+
+    def increment(self, step=1) {
+        self.value += step;
+        return self.value;
+    }
+}
+
+counter = Counter(10);
+print(counter.increment());
+print(counter.increment(5));

@@ -1,0 +1,26 @@
+# Find prime numbers up to a limit.
+
+def is_prime(n) {
+    if n < 2 {
+        return False;
+    }
+
+    i = 2;
+    while i * i <= n {
+        if n % i == 0 {
+            return False;
+        }
+        i += 1;
+    }
+
+    return True;
+}
+
+primes = [];
+for value in range(1, 30) {
+    if is_prime(value) {
+        primes.append(value);
+    }
+}
+
+print(primes);

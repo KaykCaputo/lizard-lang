@@ -1,0 +1,2 @@
+class LizardSyntaxError(Exception):
+    pass
