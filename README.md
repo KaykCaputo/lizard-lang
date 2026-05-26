@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| <img src="https://raw.githubusercontent.com/KaykCaputo/lizard-lang/master/gecko.png" alt="Lizard icon" width="185" height="185" /> | Lizard is a Python‑compatible language that adds curly braces and optional semicolons to Python syntax, then compiles to clean Python via the `ast` module. |
+| <img src="https://raw.githubusercontent.com/KaykCaputo/lizard-lang/master/gecko.png" alt="Lizard icon" width="185" height="185" /> | Lizard is a Python‑compatible language that adds curly braces and optional semicolons to Python syntax, with a self‑hosted compiler that targets clean Python via the `ast` module. |
 
 ```lz
 def hello_world() {
@@ -32,6 +32,7 @@ if True:
 - Lexer → parser → AST → `ast.unparse` pipeline (no text‑based indentation tricks)
 - Supports comprehensions, decorators, and triple‑quoted strings
 - Runs on the standard Python runtime
+- Self‑hosting compiler (Lizard in Lizard), bootstrapped from Python
 - VSCode syntax highlighting support
 
 ---
@@ -79,11 +80,11 @@ Implemented:
 - lexer + parser + AST pipeline
 - brace blocks and semicolon‑optional syntax
 - Python code generation via `ast.unparse`
+- self‑hosting compiler (Lizard in Lizard)
 
 Planned:
 - formatter
 - LSP support
-- self‑hosting (Lizard in Lizard)
 - LLVM + hybrid FFI backend
 
 ---

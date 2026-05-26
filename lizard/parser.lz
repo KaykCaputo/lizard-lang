@@ -1,0 +1,287 @@
+import ast
+import tokenize
+
+from lizard.errors import LizardSyntaxError
+from lizard.lexer import lex_source
+from lizard.tokens import TokenType
+
+INDENT = "    "
+
+BLOCK_KEYWORDS = {
+    "if",
+    "elif",
+    "else",
+    "for",
+    "while",
+    "def",
+    "class",
+    "try",
+    "except",
+    "finally",
+    "with",
+    "match",
+    "case",
+}
+
+ASYNC_BLOCK_KEYWORDS = {"def", "for", "with"}
+
+
+def _token_to_python(tokens) {
+    python_tokens = [];
+    indent_level = 0;
+    pending_indent = False;
+    block_candidate = False;
+    async_candidate = False;
+    line_start = True;
+    paren_depth = 0;
+    literal_brace_depth = 0;
+
+    def emit(token_type, value) {
+        python_tokens.append((token_type, value));
+    }
+
+    def emit_newline() {
+        if paren_depth > 0 or literal_brace_depth > 0 {
+            emit(tokenize.NL, "\n");
+        } else {
+            emit(tokenize.NEWLINE, "\n");
+        }
+    }
+
+    def has_content_after(index) {
+        line = tokens[index].line;
+        for lookahead in tokens[index + 1:] {
+            if lookahead.line != line {
+                break;
+            }
+            if lookahead.type in (TokenType.COMMENT, TokenType.NEWLINE, TokenType.SEMICOLON) {
+                continue;
+            }
+            return True;
+        }
+        return False;
+    }
+
+    def has_content_before(index) {
+        line = tokens[index].line;
+        for lookback in reversed(tokens[:index]) {
+            if lookback.line != line {
+                break;
+            }
+            if lookback.type in (TokenType.COMMENT, TokenType.NEWLINE, TokenType.SEMICOLON) {
+                continue;
+            }
+            return True;
+        }
+        return False;
+    }
+
+    for index, token in enumerate(tokens) {
+        if token.type == TokenType.EOF {
+            break;
+        }
+
+        if token.type == TokenType.COMMENT {
+            continue;
+        }
+
+        if token.type == TokenType.NEWLINE {
+            if pending_indent {
+                emit_newline();
+                emit(tokenize.INDENT, INDENT * (indent_level + 1));
+                indent_level += 1;
+                pending_indent = False;
+            } else {
+                emit_newline();
+            }
+            line_start = True;
+            block_candidate = False;
+            async_candidate = False;
+            continue;
+        }
+
+        if token.type == TokenType.SEMICOLON {
+            if paren_depth == 0 and literal_brace_depth == 0 {
+                emit(tokenize.NEWLINE, "\n");
+                line_start = True;
+                block_candidate = False;
+                async_candidate = False;
+            }
+            continue;
+        }
+
+        if token.type == TokenType.LBRACE {
+            if block_candidate and paren_depth == 0 and literal_brace_depth == 0 and not has_content_after(index) {
+                emit(tokenize.OP, ":");
+                pending_indent = True;
+                block_candidate = False;
+                async_candidate = False;
+            } else {
+                literal_brace_depth += 1;
+                emit(tokenize.OP, "{");
+            }
+            line_start = False;
+            continue;
+        }
+
+        if token.type == TokenType.RBRACE {
+            if literal_brace_depth > 0 {
+                literal_brace_depth -= 1;
+                emit(tokenize.OP, "}");
+                line_start = False;
+            } else {
+                if not has_content_before(index) {
+                    if not line_start {
+                        emit(tokenize.NEWLINE, "\n");
+                        line_start = True;
+                    }
+                    indent_level -= 1;
+                    if indent_level < 0 {
+                        raise LizardSyntaxError("Unexpected '}' at line " + str(token.line));
+                    }
+                    emit(tokenize.DEDENT, "");
+                } else {
+                    emit(tokenize.OP, "}");
+                    line_start = False;
+                }
+            }
+            block_candidate = False;
+            async_candidate = False;
+            continue;
+        }
+
+        if token.type == TokenType.LPAREN {
+            paren_depth += 1;
+            emit(tokenize.OP, "(");
+            line_start = False;
+            continue;
+        }
+
+        if token.type == TokenType.RPAREN {
+            paren_depth -= 1;
+            if paren_depth < 0 {
+                raise LizardSyntaxError("Unexpected ')' at line " + str(token.line));
+            }
+            emit(tokenize.OP, ")");
+            line_start = False;
+            continue;
+        }
+
+        if token.type == TokenType.LBRACKET {
+            paren_depth += 1;
+            emit(tokenize.OP, "[");
+            line_start = False;
+            continue;
+        }
+
+        if token.type == TokenType.RBRACKET {
+            paren_depth -= 1;
+            if paren_depth < 0 {
+                raise LizardSyntaxError("Unexpected ']' at line " + str(token.line));
+            }
+            emit(tokenize.OP, "]");
+            line_start = False;
+            continue;
+        }
+
+        if token.type == TokenType.COMMA {
+            emit(tokenize.OP, ",");
+            line_start = False;
+            continue;
+        }
+
+        if token.type == TokenType.DOT {
+            emit(tokenize.OP, ".");
+            line_start = False;
+            continue;
+        }
+
+        if token.type == TokenType.COLON {
+            emit(tokenize.OP, ":");
+            line_start = False;
+            continue;
+        }
+
+        if token.type == TokenType.ELLIPSIS {
+            emit(tokenize.OP, "...");
+            line_start = False;
+            continue;
+        }
+
+        if token.type in (TokenType.IDENTIFIER, TokenType.KEYWORD) {
+            value = token.value;
+            emit(tokenize.NAME, value);
+            line_start = False;
+
+            if value == "async" {
+                async_candidate = True;
+                continue;
+            }
+
+            if async_candidate and value in ASYNC_BLOCK_KEYWORDS {
+                block_candidate = True;
+                async_candidate = False;
+                continue;
+            }
+
+            if value in BLOCK_KEYWORDS {
+                block_candidate = True;
+            }
+            async_candidate = False;
+            continue;
+        }
+
+        if token.type == TokenType.NUMBER {
+            emit(tokenize.NUMBER, token.value);
+            line_start = False;
+            async_candidate = False;
+            continue;
+        }
+
+        if token.type == TokenType.STRING {
+            emit(tokenize.STRING, token.value);
+            line_start = False;
+            async_candidate = False;
+            continue;
+        }
+
+        if token.type == TokenType.OPERATOR {
+            emit(tokenize.OP, token.value);
+            line_start = False;
+            async_candidate = False;
+            continue;
+        }
+
+        raise LizardSyntaxError(
+            "Unhandled token " + str(token.type) + " at line " + str(token.line) + ", column " + str(token.col)
+        );
+    }
+
+    if pending_indent {
+        emit(tokenize.NEWLINE, "\n");
+        emit(tokenize.INDENT, INDENT * (indent_level + 1));
+        indent_level += 1;
+    }
+
+    if indent_level != 0 {
+        emit(tokenize.NEWLINE, "\n");
+        while indent_level > 0 {
+            emit(tokenize.DEDENT, "");
+            indent_level -= 1;
+        }
+    }
+
+    emit(tokenize.ENDMARKER, "");
+    return tokenize.untokenize(python_tokens);
+}
+
+
+def parse(source) {
+    tokens = lex_source(source);
+    python_source = _token_to_python(tokens);
+    try {
+        return ast.parse(python_source);
+    } except SyntaxError as error {
+        raise LizardSyntaxError(str(error));
+    }
+}

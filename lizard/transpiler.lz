@@ -1,0 +1,14 @@
+import ast
+
+from lizard.errors import LizardSyntaxError
+from lizard.parser import parse
+
+
+def transpile(source) {
+    tree = parse(source);
+    try {
+        return ast.unparse(tree);
+    } except AttributeError as error {
+        raise LizardSyntaxError("Python 3.9+ is required for AST unparse.");
+    }
+}

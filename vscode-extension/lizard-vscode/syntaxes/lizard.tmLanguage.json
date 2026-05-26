@@ -4,17 +4,94 @@
 
   "patterns": [
     {
-      "include": "source.python"
+      "include": "#comments"
     },
-
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#keywords"
+    },
     {
       "match": "[{}]",
       "name": "punctuation.section.block.lizard"
     },
-
     {
       "match": ";",
       "name": "punctuation.terminator.statement.lizard"
     }
-  ]
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.lizard",
+          "match": "#.*$"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.triple.double.lizard",
+          "begin": "\"\"\"",
+          "end": "\"\"\""
+        },
+        {
+          "name": "string.quoted.triple.single.lizard",
+          "begin": "'''",
+          "end": "'''"
+        },
+        {
+          "name": "string.quoted.double.lizard",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.lizard",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.lizard",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.lizard",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.lizard",
+          "match": "(?<!\\w)(?:\\d+\\.\\d+|\\d+|\\.\\d+)(?:[eE][+-]?\\d+)?"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.lizard",
+          "match": "\\b(?:if|elif|else|for|while|def|class|try|except|finally|with|match|case|return|break|continue|pass|raise|yield|async|await|import|from|as|lambda|global|nonlocal|assert|del)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.lizard",
+          "match": "\\b(?:and|or|not|in|is)\\b"
+        },
+        {
+          "name": "constant.language.lizard",
+          "match": "\\b(?:True|False|None)\\b"
+        }
+      ]
+    }
+  }
 }

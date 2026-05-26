@@ -1,0 +1,42 @@
+import inspect
+import sys
+
+from lizard.tests import test_transpiler
+
+
+def run_module(module, results) {
+    for name, value in inspect.getmembers(module) {
+        if name.startswith("test_") and callable(value) {
+            try {
+                value();
+                results["passed"] += 1;
+            } except Exception as error {
+                results["failed"] += 1;
+                print("FAIL {}: {}".format(name, error));
+            }
+        }
+    }
+}
+
+
+def main() {
+    results = {"passed": 0, "failed": 0};
+    run_module(test_transpiler, results);
+
+    total = results["passed"] + results["failed"];
+    print(
+        "Self-hosting tests: {} passed, {} failed, {} total".format(
+            results["passed"], results["failed"], total
+        )
+    );
+
+    if results["failed"] > 0 {
+        return 1;
+    }
+    return 0;
+}
+
+
+if __name__ == "__main__" {
+    sys.exit(main());
+}

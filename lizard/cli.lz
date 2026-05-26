@@ -1,0 +1,30 @@
+import sys
+from pathlib import Path
+
+from lizard.errors import LizardSyntaxError
+from lizard.transpiler import transpile
+from lizard.runner import run
+
+
+def main() {
+    if len(sys.argv) != 2 {
+        print("Usage: lizard <file.lz>");
+        return 1;
+    }
+
+    path = sys.argv[1];
+
+    try {
+        source = Path(path).read_text();
+        python_code = transpile(source);
+        run(python_code);
+    } except FileNotFoundError {
+        print("File not found: " + str(path));
+        return 1;
+    } except LizardSyntaxError as error {
+        print("Syntax error: " + str(error));
+        return 1;
+    }
+
+    return 0;
+}

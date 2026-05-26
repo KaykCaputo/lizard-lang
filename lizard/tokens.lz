@@ -1,0 +1,35 @@
+from enum import Enum
+
+
+class TokenType(Enum) {
+    CODE = "CODE";
+    STRING = "STRING";
+    COMMENT = "COMMENT";
+    IDENTIFIER = "IDENTIFIER";
+    KEYWORD = "KEYWORD";
+    NUMBER = "NUMBER";
+    OPERATOR = "OPERATOR";
+    NEWLINE = "NEWLINE";
+    EOF = "EOF";
+    LBRACE = "{";
+    RBRACE = "}";
+    LPAREN = "(";
+    RPAREN = ")";
+    LBRACKET = "[";
+    RBRACKET = "]";
+    COMMA = ",";
+    DOT = ".";
+    COLON = ":";
+    SEMICOLON = ";";
+    ELLIPSIS = "...";
+}
+
+
+class Token {
+    def __init__(self, token_type, value, line, col) {
+        self.type = token_type;
+        self.value = value;
+        self.line = line;
+        self.col = col;
+    }
+}

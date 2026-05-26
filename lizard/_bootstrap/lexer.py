@@ -1,5 +1,5 @@
-from lizard.errors import LizardSyntaxError
-from lizard.tokens import Token, TokenType
+from lizard._bootstrap.errors import LizardSyntaxError
+from lizard._bootstrap.tokens import Token, TokenType
 
 KEYWORDS = {
     "False",

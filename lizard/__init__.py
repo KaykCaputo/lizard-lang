@@ -1,3 +1,6 @@
-__all__ = ["__version__"]
+from lizard.bootstrap import install
 
-__version__ = "0.1.0"
+install()
+
+__all__ = ["__version__"]
+__version__ = "0.5.0"

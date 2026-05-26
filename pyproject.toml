@@ -44,7 +44,7 @@ Documentation = "https://github.com/KaykCaputo/lizard-lang#readme"
 Issues = "https://github.com/KaykCaputo/lizard-lang/issues"
 
 [project.scripts]
-lizard = "lizard.cli:main"
+lizard = "lizard.bootstrap:main"
 
 [dependency-groups]
 dev = ["mypy", "pytest"]
@@ -53,3 +53,6 @@ dev = ["mypy", "pytest"]
 where = ["."]
 include = ["lizard*"]
 exclude = ["tests*"]
+
+[tool.setuptools.package-data]
+lizard = ["**/*.lz"]
