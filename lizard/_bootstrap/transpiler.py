@@ -1,10 +1,9 @@
 import ast
 
-from lizard.errors import LizardSyntaxError
-from lizard.lexer import lex_line
-from lizard.parser import parse
-from lizard.tokens import TokenType
-
+from lizard._bootstrap.errors import LizardSyntaxError
+from lizard._bootstrap.lexer import lex_line
+from lizard._bootstrap.parser import parse
+from lizard._bootstrap.tokens import TokenType
 
 INDENT = "    "
 

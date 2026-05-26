@@ -3,7 +3,7 @@
   "name": "lizard-lang",
   "displayName": "Lizard-Lang",
   "description": "Syntax highlighting and language configuration for Lizard.",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "icon": "gecko.png",
   "license": "MIT",
   "categories": ["Programming Languages"],
@@ -42,7 +42,5 @@
         "path": "./syntaxes/lizard.tmLanguage.json"
       }
     ]
-  },
-  
-  "extensionDependencies": ["ms-python.python"]
+  }
 }

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lizard-lang"
-version = "0.5.0"
+version = "1.0.0"
 description = "Lizard is a python-based programming language that adds semicolons and curly braces to Python syntax"
 authors = [
   { name = "Kayk Caputo" }
@@ -44,7 +44,7 @@ Documentation = "https://github.com/KaykCaputo/lizard-lang#readme"
 Issues = "https://github.com/KaykCaputo/lizard-lang/issues"
 
 [project.scripts]
-lizard = "lizard.cli:main"
+lizard = "lizard.bootstrap:main"
 
 [dependency-groups]
 dev = ["mypy", "pytest"]
@@ -53,3 +53,6 @@ dev = ["mypy", "pytest"]
 where = ["."]
 include = ["lizard*"]
 exclude = ["tests*"]
+
+[tool.setuptools.package-data]
+lizard = ["**/*.lz"]

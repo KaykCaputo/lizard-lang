@@ -3,9 +3,9 @@ from __future__ import annotations
 import ast
 import tokenize
 
-from lizard.errors import LizardSyntaxError
-from lizard.lexer import lex_source
-from lizard.tokens import TokenType
+from lizard._bootstrap.errors import LizardSyntaxError
+from lizard._bootstrap.lexer import lex_source
+from lizard._bootstrap.tokens import TokenType
 
 INDENT = "    "
 
