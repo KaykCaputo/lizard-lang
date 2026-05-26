@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lizard-lang"
-version = "0.0.6"
+version = "0.5.0"
 description = "Lizard is a python-based programming language that adds semicolons and curly braces to Python syntax"
 authors = [
   { name = "Kayk Caputo" }

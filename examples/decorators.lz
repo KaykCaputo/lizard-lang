@@ -1,0 +1,18 @@
+# Decorator example with nested functions.
+
+def add_prefix(prefix) {
+    def decorator(fn) {
+        def wrapper() {
+            return prefix + fn();
+        }
+        return wrapper;
+    }
+    return decorator;
+}
+
+@add_prefix("Hello, ")
+def greet() {
+    return "Lizard";
+}
+
+print(greet());

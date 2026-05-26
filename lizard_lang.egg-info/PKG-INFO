@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: lizard-lang
-Version: 0.0.6
+Version: 0.5.0
 Summary: Lizard is a python-based programming language that adds semicolons and curly braces to Python syntax
 Author: Kayk Caputo
 License-Expression: MIT
@@ -29,9 +29,7 @@ Dynamic: license-file
 
 | | |
 | --- | --- |
-| <img src="https://raw.githubusercontent.com/KaykCaputo/lizard-lang/master/gecko.png" alt="Lizard icon" width="185" height="185" /> | Lizard is a Python-based programming language that adds semicolons and curly braces to Python syntax. |
-
-It transpiles directly to Python and runs on the Python runtime.
+| <img src="https://raw.githubusercontent.com/KaykCaputo/lizard-lang/master/gecko.png" alt="Lizard icon" width="185" height="185" /> | Lizard is a Python‑compatible language that adds curly braces and optional semicolons to Python syntax, then compiles to clean Python via the `ast` module. |
 
 ```lz
 def hello_world() {
@@ -47,7 +45,7 @@ Transpiled output:
 
 ```python
 def hello_world():
-    print("Hello World!")
+    print('Hello World!')
 
 if True:
     hello_world()
@@ -55,66 +53,36 @@ if True:
 
 ---
 
-# Features
+## Features
 
-- Python-compatible syntax
-- Curly brace blocks (`{}`)
-- Optional semicolons (`;`)
-- Direct transpilation to Python
-- Lightweight implementation
+- Python‑compatible syntax with `{}` blocks and optional `;`
+- Lexer → parser → AST → `ast.unparse` pipeline (no text‑based indentation tricks)
+- Supports comprehensions, decorators, and triple‑quoted strings
+- Runs on the standard Python runtime
 - VSCode syntax highlighting support
 
 ---
 
-# Example
+## Examples
 
-## Lizard
-
-```python
-def factorial(n) {
-    if n <= 1 {
-        return 1;
-    }
-
-    return n * factorial(n - 1);
-}
-
-print(factorial(5));
-```
-
-## Generated Python
-
-```python
-def factorial(n):
-    if n <= 1:
-        return 1
-
-    return n * factorial(n - 1)
-
-print(factorial(5))
-```
+- **Hello world:** `examples/hello.lz`
+- **Factorial:** `examples/factorial.lz`
+- **Comprehensions + dict/set literals:** `examples/comprehensions.lz`
+- **Decorators:** `examples/decorators.lz`
+- **Multiline strings:** `examples/multiline_strings.lz`
 
 ---
 
-# Installation
+## Installation
 
 - PyPI: [lizard-lang](https://pypi.org/project/lizard-lang/)
 - VSCode Extension: [Lizard Lang](https://marketplace.visualstudio.com/items?itemName=KaykCaputo.lizard-lang)
-
-## Clone repository
-
-```bash
-git clone https://github.com/KaykCaputo/lizard-lang.git
-cd lizard-lang
-```
-
-## Install (CLI)
 
 ```bash
 pip install lizard-lang
 ```
 
-## Run
+Run:
 
 ```bash
 lizard examples/hello.lz
@@ -122,59 +90,32 @@ lizard examples/hello.lz
 
 ---
 
-# VSCode Extension
-
-Lizard includes a VSCode extension with:
-- syntax highlighting
-- bracket matching
-- `.lz` file support
-
-To install locally:
+## Development
 
 ```bash
-vsce package
-code --install-extension lizard-0.0.1.vsix
+pytest
 ```
 
 ---
 
-# Current Status
+## Current Status
 
-Lizard is currently experimental.
+Lizard is experimental.
 
 Implemented:
-- semicolon removal
-- brace blocks
-- automatic indentation
-- Python transpilation
+- lexer + parser + AST pipeline
+- brace blocks and semicolon‑optional syntax
+- Python code generation via `ast.unparse`
 
 Planned:
-- lexer
-- parser
-- AST
 - formatter
 - LSP support
-- self-hosting experiments
+- self‑hosting (Lizard in Lizard)
+- LLVM + hybrid FFI backend
 
 ---
 
-# Project Structure
-
-```txt
-lizard/
-├── lizard/
-│   ├── transpiler.py
-│   ├── runner.py
-│   └── cli.py
-│
-├── examples/
-├── vscode-extension/
-└── pyproject.toml
-```
-
----
-
-# Why?
+## Why?
 
 Because some developers prefer:
 
@@ -191,10 +132,10 @@ if condition:
     do_something()
 ```
 
-Lizard explores whether Python can support both styles while preserving readability and simplicity.
+Lizard explores whether Python can support both styles while staying fully compatible with Python semantics.
 
 ---
 
-# License
+## License
 
 MIT

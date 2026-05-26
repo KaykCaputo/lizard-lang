@@ -5,9 +5,23 @@ class TokenType(Enum):
     CODE = "CODE"
     STRING = "STRING"
     COMMENT = "COMMENT"
+    IDENTIFIER = "IDENTIFIER"
+    KEYWORD = "KEYWORD"
+    NUMBER = "NUMBER"
+    OPERATOR = "OPERATOR"
+    NEWLINE = "NEWLINE"
+    EOF = "EOF"
     LBRACE = "{"
     RBRACE = "}"
+    LPAREN = "("
+    RPAREN = ")"
+    LBRACKET = "["
+    RBRACKET = "]"
+    COMMA = ","
+    DOT = "."
+    COLON = ":"
     SEMICOLON = ";"
+    ELLIPSIS = "..."
 
 
 class Token:

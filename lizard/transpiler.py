@@ -1,9 +1,40 @@
+import ast
+
 from lizard.errors import LizardSyntaxError
 from lizard.lexer import lex_line
+from lizard.parser import parse
 from lizard.tokens import TokenType
 
 
 INDENT = "    "
+
+
+def _has_content_after(tokens, index: int) -> bool:
+    for token in tokens[index + 1:]:
+        if token.type == TokenType.COMMENT:
+            break
+        if token.type == TokenType.SEMICOLON:
+            continue
+        if token.type == TokenType.CODE:
+            if token.value.strip():
+                return True
+            continue
+        return True
+    return False
+
+
+def _has_content_before(tokens, index: int) -> bool:
+    for token in tokens[:index]:
+        if token.type == TokenType.COMMENT:
+            break
+        if token.type == TokenType.SEMICOLON:
+            continue
+        if token.type == TokenType.CODE:
+            if token.value.strip():
+                return True
+            continue
+        return True
+    return False
 
 
 def transpile_line(line: str, line_number: int) -> tuple[str, bool, bool]:
@@ -15,7 +46,7 @@ def transpile_line(line: str, line_number: int) -> tuple[str, bool, bool]:
 
     tokens = lex_line(line, line_number)
 
-    for token in tokens:
+    for index, token in enumerate(tokens):
         if token.type == TokenType.SEMICOLON:
             continue
 
@@ -25,12 +56,22 @@ def transpile_line(line: str, line_number: int) -> tuple[str, bool, bool]:
             break
 
         if token.type == TokenType.LBRACE:
-            result.append(":")
-            opens_block = True
+            if not _has_content_after(tokens, index):
+                result.append(":")
+                opens_block = True
+            else:
+                result.append(token.value)
             continue
 
         if token.type == TokenType.RBRACE:
-            closes_block = True
+            if not _has_content_before(tokens, index):
+                closes_block = True
+            else:
+                result.append(token.value)
+            continue
+
+        if token.type == TokenType.CODE and closes_block and not result:
+            result.append(token.value.lstrip())
             continue
 
         result.append(token.value)
@@ -43,34 +84,8 @@ def transpile_line(line: str, line_number: int) -> tuple[str, bool, bool]:
 
 
 def transpile(source: str) -> str:
-    output = []
-
-    indent_level = 0
-
-    for line_number, raw_line in enumerate(source.splitlines(), start=1):
-
-        stripped = raw_line.strip()
-
-        if not stripped:
-            output.append("")
-            continue
-
-        transformed, opens_block, closes_block = transpile_line(stripped, line_number)
-
-        if closes_block:
-            indent_level -= 1
-
-            if indent_level < 0:
-                raise LizardSyntaxError(f"Unexpected '}}' at line {line_number}")
-
-        output.append(
-            INDENT * indent_level + transformed
-        )
-
-        if opens_block:
-            indent_level += 1
-
-    if indent_level != 0:
-        raise LizardSyntaxError("Unclosed block")
-
-    return "\n".join(output)
+    tree = parse(source)
+    try:
+        return ast.unparse(tree)
+    except AttributeError as error:
+        raise LizardSyntaxError("Python 3.9+ is required for AST unparse.") from error

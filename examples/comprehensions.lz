@@ -1,0 +1,9 @@
+# Comprehensions + dict/set literals.
+
+squares = [n * n for n in range(6) if n % 2 == 0];
+lookup = {n: n * n for n in range(4)};
+unique = {n % 3 for n in range(8)};
+
+print(squares);
+print(lookup);
+print(unique);
